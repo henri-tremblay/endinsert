@@ -1,7 +1,5 @@
 package org.henri.endinsert;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openjdk.jmh.annotations.BenchmarkType;
@@ -12,7 +10,6 @@ import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
-import org.openjdk.jmh.logic.BlackHole;
 
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
@@ -35,22 +32,25 @@ public class ImmutableJMH {
     }
 
     @GenerateMicroBenchmark(BenchmarkType.AverageTimePerOp)
-    public int[] immutableMessage(NormalState s, BlackHole hole) {
+    public int[] baseline(NormalState s) {
+        return s.list;
+    }
+    
+    @GenerateMicroBenchmark(BenchmarkType.AverageTimePerOp)
+    public int[] immutableMessage(NormalState s) {
         int[] result = new int[s.list.length];
         for (int i = 0; i < s.list.length; i++) {
             result[i] = s.list[i] + 1;
         }
-        hole.consume(result);
         s.list = result;
         return result;
     }
 
     @GenerateMicroBenchmark(BenchmarkType.AverageTimePerOp)
-    public int[] mutableMessage(NormalState s, BlackHole hole) {
+    public int[] mutableMessage(NormalState s) {
         for (int i = 0; i < s.list.length; i++) {
             s.list[i] = s.list[i] + 1;
         }
-        hole.consume(s.list);
         return s.list;
     }
 
