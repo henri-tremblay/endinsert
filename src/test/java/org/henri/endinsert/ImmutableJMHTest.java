@@ -19,23 +19,23 @@ public class ImmutableJMHTest {
     
     @Before
     public void setup() {
-        state.list = Arrays.asList(0, 1, 2);
+        state.list = new int[] {0, 1, 2};
     }
     
     @Test
     public void immutableTest() {
-        assertArrayEquals(new Integer[] {1,2,3}, test.immutableMessage(state, hole).toArray(new Integer[3]));
+        assertArrayEquals(new int[] {1,2,3}, test.immutableMessage(state, hole));
     }
     
     @Test
     public void mutableTest() throws Exception {
-        assertArrayEquals(new Integer[] {1,2,3}, test.mutableMessage(state, hole).toArray(new Integer[3]));
+        assertArrayEquals(new int[] {1,2,3}, test.mutableMessage(state, hole));
     }
     
     @Test
     public void benchTest() throws Exception {
         state.up();
-        assertEquals(ImmutableJMH.COUNT, test.mutableMessage(state, hole).size());
-        assertEquals(ImmutableJMH.COUNT, test.immutableMessage(state, hole).size());
+        assertEquals(ImmutableJMH.COUNT, test.mutableMessage(state, hole).length);
+        assertEquals(ImmutableJMH.COUNT, test.immutableMessage(state, hole).length);
     }
 }

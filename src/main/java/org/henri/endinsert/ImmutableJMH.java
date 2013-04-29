@@ -23,22 +23,22 @@ public class ImmutableJMH {
 
     @State
     public static class NormalState {
-        List<Integer> list;
+        int[] list;
 
         @Setup(Level.Trial)
         public void up() {
-            list = new ArrayList<Integer>(COUNT);
+            list = new int[COUNT];
             for (int i = 0; i < COUNT; i++) {
-                list.add(i);
+                list[i] = i;
             }
         }
     }
 
     @GenerateMicroBenchmark(BenchmarkType.AverageTimePerOp)
-    public List<Integer> immutableMessage(NormalState s, BlackHole hole) {
-        List<Integer> result = new ArrayList<Integer>(s.list.size());
-        for (Integer e : s.list) {
-            result.add(e + 1);
+    public int[] immutableMessage(NormalState s, BlackHole hole) {
+        int[] result = new int[s.list.length];
+        for (int i = 0; i < s.list.length; i++) {
+            result[i] = s.list[i] + 1;
         }
         hole.consume(result);
         s.list = result;
@@ -46,9 +46,9 @@ public class ImmutableJMH {
     }
 
     @GenerateMicroBenchmark(BenchmarkType.AverageTimePerOp)
-    public List<Integer> mutableMessage(NormalState s, BlackHole hole) {
-        for (int i = 0; i < s.list.size(); i++) {
-            s.list.set(i, s.list.get(i) + 1);
+    public int[] mutableMessage(NormalState s, BlackHole hole) {
+        for (int i = 0; i < s.list.length; i++) {
+            s.list[i] = s.list[i] + 1;
         }
         hole.consume(s.list);
         return s.list;
